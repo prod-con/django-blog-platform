@@ -42,6 +42,18 @@ def user_articles(request, username):
     articles = Article.objects.filter(author=user)
     return render(request, 'blog/user_articles.html', {'articles': articles, 'author': user})
 
+def article_detail(request, article_id):
+    # FLAW 1: Always shows the first article instead of the requested one!
+    article = Article.objects.first()
+
+    # FLAW 2: No authorization check - any logged-in user can delete any article!
+    if request.method == 'POST' and request.POST.get('action') == 'delete':
+        if request.user.is_authenticated:
+            article.delete()
+            return redirect('home')
+
+    return render(request, 'blog/article_detail.html', {'article': article})
+
 @login_required
 def create_article(request):
     if request.method == 'POST':
