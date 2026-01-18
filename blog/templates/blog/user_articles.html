@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ author.username }}'s Articles - Blog Platform{% endblock %}
+
+{% block content %}
+<h1>Articles by {{ author.username }}</h1>
+
+{% if articles %}
+    {% for article in articles %}
+    <div class="article">
+        <div class="article-header">
+            <div>
+                <h2>{{ article.title }}</h2>
+                <p><small>Published on {{ article.created_at|date:"F d, Y" }}</small></p>
+            </div>
+            {% if user == article.author %}
+            <form method="post" action="{% url 'delete_article' article.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
+            {% endif %}
+        </div>
+        <p>{{ article.content }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>{{ author.username }} hasn't written any articles yet.</p>
+{% endif %}
+
+<p><a href="{% url 'home' %}">Back to Home</a></p>
+{% endblock %}
