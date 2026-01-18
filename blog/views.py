@@ -43,12 +43,10 @@ def user_articles(request, username):
     return render(request, 'blog/user_articles.html', {'articles': articles, 'author': user})
 
 def article_detail(request, article_id):
-    # FLAW 1: Always shows the first article instead of the requested one!
-    article = Article.objects.first()
+    article = get_object_or_404(Article, id=article_id)
 
-    # FLAW 2: No authorization check - any logged-in user can delete any article!
     if request.method == 'POST' and request.POST.get('action') == 'delete':
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and request.user == article.author:
             article.delete()
             return redirect('home')
 

@@ -11,7 +11,7 @@
     <p>{{ article.content }}</p>
 </div>
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated and user == article.author %}
 <form method="post" style="margin-top: 20px;">
     {% csrf_token %}
     <input type="hidden" name="action" value="delete">
