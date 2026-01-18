@@ -42,6 +42,16 @@ def user_articles(request, username):
     articles = Article.objects.filter(author=user)
     return render(request, 'blog/user_articles.html', {'articles': articles, 'author': user})
 
+def article_detail(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+
+    if request.method == 'POST' and request.POST.get('action') == 'delete':
+        if request.user.is_authenticated and request.user == article.author:
+            article.delete()
+            return redirect('home')
+
+    return render(request, 'blog/article_detail.html', {'article': article})
+
 @login_required
 def create_article(request):
     if request.method == 'POST':
